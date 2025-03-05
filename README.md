@@ -353,9 +353,9 @@ The following Modules are called:
 
 ### <a name="module_avm_interfaces"></a> [avm\_interfaces](#module\_avm\_interfaces)
 
-Source: /Users/matt/code/terraform-azure-avm-utl-interfaces
+Source: Azure/avm-interfaces/azure
 
-Version:
+Version: 0.2.0
 
 ### <a name="module_avm_interfaces_private_endpoints"></a> [avm\_interfaces\_private\_endpoints](#module\_avm\_interfaces\_private\_endpoints)
 

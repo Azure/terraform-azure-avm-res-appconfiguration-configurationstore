@@ -1,6 +1,6 @@
 module "avm_interfaces" {
-  source = "/Users/matt/code/terraform-azure-avm-utl-interfaces"
-  #version            = "0.1.2"
+  source                           = "Azure/avm-interfaces/azure"
+  version                          = "0.2.0"
   managed_identities               = var.managed_identities
   lock                             = var.lock
   customer_managed_key             = var.customer_managed_key
