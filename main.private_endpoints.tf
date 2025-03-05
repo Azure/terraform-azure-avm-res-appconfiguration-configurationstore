@@ -19,7 +19,8 @@ resource "azapi_resource" "private_dns_zone_groups" {
 }
 
 module "avm_interfaces_private_endpoints" {
-  source           = "/Users/matt/code/terraform-azure-avm-utl-interfaces"
+  source           = "Azure/avm-utl-interfaces/azure"
+  version          = "0.2.0"
   for_each         = var.private_endpoints
   lock             = each.value.lock
   role_assignments = each.value.role_assignments

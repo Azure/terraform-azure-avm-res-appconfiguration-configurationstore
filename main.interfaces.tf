@@ -1,5 +1,5 @@
 module "avm_interfaces" {
-  source                           = "Azure/avm-interfaces/azure"
+  source                           = "Azure/avm-utl-interfaces/azure"
   version                          = "0.2.0"
   managed_identities               = var.managed_identities
   lock                             = var.lock
