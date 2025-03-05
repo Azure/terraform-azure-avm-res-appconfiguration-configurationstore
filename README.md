@@ -340,7 +340,7 @@ The following outputs are exported:
 
 ### <a name="output_name"></a> [name](#output\_name)
 
-Description: n/a
+Description: The name of the resource.
 
 ### <a name="output_private_endpoint_resource_ids"></a> [private\_endpoint\_resource\_ids](#output\_private\_endpoint\_resource\_ids)
 
@@ -348,7 +348,7 @@ Description: A map of the private endpoints created to their resource ids.
 
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
-Description: n/a
+Description: The resource id of the resource.
 
 ## Modules
 
