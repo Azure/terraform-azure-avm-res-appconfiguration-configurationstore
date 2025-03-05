@@ -1,6 +1,16 @@
-output "private_endpoints" {
+output "name" {
+  description = "The name of the resource."
+  value       = azapi_resource.this.name
+}
+
+output "private_endpoint_resource_ids" {
   description = <<DESCRIPTION
-  A map of the private endpoints created.
-  DESCRIPTION
-  value       = var.private_endpoints_manage_dns_zone_group ? azurerm_private_endpoint.this_managed_dns_zone_groups : azurerm_private_endpoint.this_unmanaged_dns_zone_groups
+A map of the private endpoints created to their resource ids.
+DESCRIPTION
+  value       = { for k, v in azapi_resource.private_endpoints : k => v.id }
+}
+
+output "resource_id" {
+  description = "The resource id of the resource."
+  value       = azapi_resource.this.id
 }
