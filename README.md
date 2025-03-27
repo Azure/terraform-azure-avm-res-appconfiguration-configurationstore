@@ -2,6 +2,10 @@
 # terraform-azure-avm-res-appconfiguration-configurationstore
 
 Deploys an Azure App Configuration Store.
+Has submodules for:
+
+- Key Value - the capability to store key-value pairs.
+- Key Value (data) - the ability to retrieve key-value pairs.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
@@ -37,6 +41,22 @@ The following resources are used by this module:
 ## Required Inputs
 
 The following input variables are required:
+
+### <a name="input_key_values"></a> [key\_values](#input\_key\_values)
+
+Description: Map of objects containing App Configuration key-value attributes to create. The map key is deliberately arbitrary to ensure keys can always be known at plan time.
+
+Type:
+
+```hcl
+map(object({
+    key          = string
+    value        = string
+    content_type = optional(string, null)
+    label        = optional(string, null)
+    tags         = optional(map(string), null)
+  }))
+```
 
 ### <a name="input_location"></a> [location](#input\_location)
 
@@ -370,6 +390,12 @@ Version: 0.2.0
 Source: Azure/avm-utl-interfaces/azure
 
 Version: 0.2.0
+
+### <a name="module_key_values"></a> [key\_values](#module\_key\_values)
+
+Source: ./modules/keyvalue
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
