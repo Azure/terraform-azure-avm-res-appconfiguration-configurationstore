@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
-# Default example
+# Customer managed key example
 
-This deploys the module in its simplest form.
+This deploys the module with a CMK.
 
 ```hcl
 terraform {
@@ -25,6 +25,8 @@ terraform {
 provider "azurerm" {
   features {}
 }
+
+data "azapi_client_config" "current" {}
 
 ## Section to provide a random Azure region for the resource group
 # This allows us to randomize the region for the resource group.
@@ -55,10 +57,56 @@ resource "azapi_resource" "rg" {
   schema_validation_enabled = false
 }
 
+# user-assigned managed identity
+resource "azapi_resource" "umi" {
+  type      = "Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30"
+  location  = azapi_resource.rg.location
+  name      = module.naming.user_assigned_identity.name_unique
+  parent_id = azapi_resource.rg.id
+  response_export_values = [
+    "properties.principalId",
+    "properties.clientId",
+  ]
+  schema_validation_enabled = false
+}
+
+# key vault & key
+module "key_vault" {
+  source              = "Azure/avm-res-keyvault-vault/azurerm"
+  version             = "0.10.0"
+  name                = module.naming.key_vault.name_unique
+  resource_group_name = azapi_resource.rg.name
+  location            = azapi_resource.rg.location
+  tenant_id           = data.azapi_client_config.current.tenant_id
+  network_acls = {
+    default_action = "Allow"
+  }
+  role_assignments = {
+    admin = {
+      principal_id               = data.azapi_client_config.current.object_id
+      role_definition_id_or_name = "Key Vault Administrator"
+      principal_type             = "User"
+    }
+  }
+  keys = {
+    cmk = {
+      name     = "cmk"
+      key_type = "RSA"
+      key_size = 4096
+      key_opts = ["wrapKey", "unwrapKey", "sign", "verify", "encrypt", "decrypt"]
+      enabled  = true
+      role_assignments = {
+        umi = {
+          principal_id               = azapi_resource.umi.output.properties.principalId
+          role_definition_id_or_name = "Key Vault Crypto Service Encryption User"
+          principal_type             = "ServicePrincipal"
+        }
+      }
+    }
+  }
+}
+
 # This is the module call
-# Do not specify location here due to the randomization above.
-# Leaving location as `null` will cause the module to use the resource group location
-# with a data source.
 module "test" {
   source = "../../"
   # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
@@ -68,6 +116,18 @@ module "test" {
   resource_group_resource_id      = azapi_resource.rg.id
   azapi_schema_validation_enabled = false
   enable_telemetry                = var.enable_telemetry
+  customer_managed_key = {
+    key_name              = "cmk"
+    key_vault_resource_id = module.key_vault.resource_id
+    user_assigned_identity = {
+      resource_id = azapi_resource.umi.id
+    }
+  }
+  managed_identities = {
+    user_assigned_resource_ids = [
+      azapi_resource.umi.id
+    ]
+  }
 }
 ```
 
@@ -89,7 +149,9 @@ The following requirements are needed by this module:
 The following resources are used by this module:
 
 - [azapi_resource.rg](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.umi](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [random_integer.region_index](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/integer) (resource)
+- [azapi_client_config.current](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -117,6 +179,12 @@ No outputs.
 ## Modules
 
 The following Modules are called:
+
+### <a name="module_key_vault"></a> [key\_vault](#module\_key\_vault)
+
+Source: Azure/avm-res-keyvault-vault/azurerm
+
+Version: 0.10.0
 
 ### <a name="module_naming"></a> [naming](#module\_naming)
 

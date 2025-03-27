@@ -7,19 +7,39 @@ variable "location" {
 variable "name" {
   type        = string
   description = "The name of the this resource."
+  nullable    = false
 
   validation {
-    condition     = can(regex("TODO", var.name))
-    error_message = "The name must be TODO." # TODO remove the example below once complete:
-    #condition     = can(regex("^[a-z0-9]{5,50}$", var.name))
-    #error_message = "The name must be between 5 and 50 characters long and can only contain lowercase letters and numbers."
+    error_message = "5-50 characters,	alphanumerics and hyphens only."
+    condition     = can(regex("^[a-zA-Z0-9-]{5,50}$", var.name))
+  }
+  validation {
+    error_message = "Can't contain a sequence of more than two hyphens"
+    condition     = !can(regex(".*---.*", var.name))
+  }
+  validation {
+    error_message = "Can't start with or end with a hyphen."
+    condition     = !can(regex("^-.*|.*-$", var.name))
   }
 }
 
 # This is required for most resource modules
-variable "resource_group_name" {
+variable "resource_group_resource_id" {
   type        = string
-  description = "The resource group where the resources will be deployed."
+  description = "The resource group id where the resources will be deployed."
+  nullable    = false
+
+  validation {
+    error_message = "The resource group id must be a valid resource id."
+    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+$", var.resource_group_resource_id))
+  }
+}
+
+variable "azapi_schema_validation_enabled" {
+  type        = bool
+  default     = true
+  description = "Enable or disable schema validation for AzAPI resources. Default is `true`. Disable this when certain known-after-apply values cause issues with schema validation."
+  nullable    = false
 }
 
 # required AVM interfaces
@@ -42,7 +62,35 @@ A map describing customer-managed keys to associate with the resource. This incl
 - `key_version` - (Optional) The version of the key. If not specified, the latest version is used.
 - `user_assigned_identity` - (Optional) An object representing a user-assigned identity with the following properties:
   - `resource_id` - The resource ID of the user-assigned identity.
-DESCRIPTION  
+DESCRIPTION
+}
+
+variable "data_plane_proxy" {
+  type = object({
+    authentication_mode     = string
+    private_link_delegation = string
+  })
+  default     = null
+  description = <<DESCRIPTION
+An object describing the data plane proxy configuration (access to the data plane via Azure Resource Manager). This includes the following properties:
+
+- `authentication_mode` - The authentication mode for the data plane proxy. Possible values are `"Local"` and `"Pass-through"`.
+- `private_link_delegation` - The private link delegation setting for the data plane proxy. Possible values are `"Enabled"` and `"Disabled"`.
+
+If not specified, the default values are:
+
+- `authentication_mode` = `"Pass-through"` (This mode is recommended. Microsoft Entra ID will be passed from Azure Resource Manager to App Configuration for authorization. Proper authorization for both Azure App Configuration and Azure Resource Manager are required.)
+- `private_link_delegation` = `"Disabled"`
+DESCRIPTION
+
+  validation {
+    error_message = "Authentication mode should be either 'Local' or 'Pass-through'."
+    condition     = var.data_plane_proxy == null ? true : contains(["Local", "Pass-through"], var.data_plane_proxy.authentication_mode)
+  }
+  validation {
+    error_message = "Private link delegation should be either 'Enabled' or 'Disabled'."
+    condition     = var.data_plane_proxy == null ? true : contains(["Enabled", "Disabled"], var.data_plane_proxy.private_link_delegation)
+  }
 }
 
 variable "diagnostic_settings" {
@@ -72,7 +120,7 @@ A map of diagnostic settings to create on the Key Vault. The map key is delibera
 - `event_hub_authorization_rule_resource_id` - (Optional) The resource ID of the event hub authorization rule to send logs and metrics to.
 - `event_hub_name` - (Optional) The name of the event hub. If none is specified, the default event hub will be selected.
 - `marketplace_partner_resource_id` - (Optional) The full ARM resource ID of the Marketplace resource to which you would like to send Diagnostic LogsLogs.
-DESCRIPTION  
+DESCRIPTION
   nullable    = false
 
   validation {
@@ -101,6 +149,13 @@ DESCRIPTION
   nullable    = false
 }
 
+variable "local_auth_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether to enable local authentication. Set to `false` to only allow Entra authentication, default is `false`."
+  nullable    = false
+}
+
 variable "lock" {
   type = object({
     kind = string
@@ -120,7 +175,6 @@ DESCRIPTION
   }
 }
 
-# tflint-ignore: terraform_unused_declarations
 variable "managed_identities" {
   type = object({
     system_assigned            = optional(bool, false)
@@ -142,6 +196,7 @@ variable "private_endpoints" {
     role_assignments = optional(map(object({
       role_definition_id_or_name             = string
       principal_id                           = string
+      principal_type                         = optional(string, null)
       description                            = optional(string, null)
       skip_service_principal_aad_check       = optional(bool, false)
       condition                              = optional(string, null)
@@ -200,10 +255,25 @@ variable "private_endpoints_manage_dns_zone_group" {
   nullable    = false
 }
 
+variable "public_network_access_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether to enable public network access, default is `false`."
+  nullable    = false
+}
+
+variable "purge_protection_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether to enable purge protection, default is `true`."
+  nullable    = false
+}
+
 variable "role_assignments" {
   type = map(object({
     role_definition_id_or_name             = string
     principal_id                           = string
+    principal_type                         = optional(string, null)
     description                            = optional(string, null)
     skip_service_principal_aad_check       = optional(bool, false)
     condition                              = optional(string, null)
@@ -216,6 +286,7 @@ A map of role assignments to create on this resource. The map key is deliberatel
 
 - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
 - `principal_id` - The ID of the principal to assign the role to.
+- `principal_type` - (Optional) The type of the principal. Possible values are `User`, `Group`, and `ServicePrincipal`. It is necessary to explicitly set this attribute when creating role assignments if the principal creating the assignment is constrained by ABAC rules that filters on the PrincipalType attribute.
 - `description` - The description of the role assignment.
 - `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
 - `condition` - The condition which will be used to scope the role assignment.
@@ -226,7 +297,30 @@ DESCRIPTION
   nullable    = false
 }
 
-# tflint-ignore: terraform_unused_declarations
+variable "sku" {
+  type        = string
+  default     = "standard"
+  description = "The SKU of the resource. Valid values are free, standard, and premium."
+  nullable    = false
+
+  validation {
+    error_message = "SKU must be one of free, standard, or premium."
+    condition     = contains(["free", "standard", "premium"], var.sku)
+  }
+}
+
+variable "soft_delete_retention_days" {
+  type        = number
+  default     = 7
+  description = "The number of days that items are retained before being permanently deleted. Default is 7 days."
+  nullable    = false
+
+  validation {
+    error_message = "Must be a positive integer"
+    condition     = var.soft_delete_retention_days > 0 && floor(var.soft_delete_retention_days) == var.soft_delete_retention_days
+  }
+}
+
 variable "tags" {
   type        = map(string)
   default     = null

@@ -1,16 +1,11 @@
 <!-- BEGIN_TF_DOCS -->
-# terraform-azurerm-avm-template
+# terraform-azure-avm-res-appconfiguration-configurationstore
 
-This is a template repo for Terraform Azure Verified Modules.
+Deploys an Azure App Configuration Store.
+Has submodules for:
 
-Things to do:
-
-1. Set up a GitHub repo environment called `test`.
-1. Configure environment protection rule to ensure that approval is required before deploying to this environment.
-1. Create a user-assigned managed identity in your test subscription.
-1. Create a role assignment for the managed identity on your test subscription, use the minimum required role.
-1. Configure federated identity credentials on the user assigned managed identity. Use the GitHub environment.
-1. Search and update TODOs within the code and remove the TODO comments once complete.
+- Key Value - the capability to store key-value pairs.
+- Key Value (data) - the ability to retrieve key-value pairs.
 
 <!-- markdownlint-disable MD033 -->
 ## Requirements
@@ -19,7 +14,7 @@ The following requirements are needed by this module:
 
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
 
-- <a name="requirement_azurerm"></a> [azurerm](#requirement\_azurerm) (~> 4.0)
+- <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
 
 - <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
 
@@ -29,15 +24,17 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
-- [azurerm_management_lock.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/management_lock) (resource)
-- [azurerm_private_endpoint.this_managed_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
-- [azurerm_private_endpoint.this_unmanaged_dns_zone_groups](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint) (resource)
-- [azurerm_private_endpoint_application_security_group_association.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_endpoint_application_security_group_association) (resource)
-- [azurerm_resource_group.TODO](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) (resource)
-- [azurerm_role_assignment.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/role_assignment) (resource)
+- [azapi_resource.diag_settings](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.lock](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.private_dns_zone_groups](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.private_endpoint_lock](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.private_endpoint_role_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.private_endpoints](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.role_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
 - [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
-- [azurerm_client_config.telemetry](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) (data source)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 - [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
@@ -57,15 +54,23 @@ Description: The name of the this resource.
 
 Type: `string`
 
-### <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name)
+### <a name="input_resource_group_resource_id"></a> [resource\_group\_resource\_id](#input\_resource\_group\_resource\_id)
 
-Description: The resource group where the resources will be deployed.
+Description: The resource group id where the resources will be deployed.
 
 Type: `string`
 
 ## Optional Inputs
 
 The following input variables are optional (have default values):
+
+### <a name="input_azapi_schema_validation_enabled"></a> [azapi\_schema\_validation\_enabled](#input\_azapi\_schema\_validation\_enabled)
+
+Description: Enable or disable schema validation for AzAPI resources. Default is `true`. Disable this when certain known-after-apply values cause issues with schema validation.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_customer_managed_key"></a> [customer\_managed\_key](#input\_customer\_managed\_key)
 
@@ -86,6 +91,29 @@ object({
     user_assigned_identity = optional(object({
       resource_id = string
     }), null)
+  })
+```
+
+Default: `null`
+
+### <a name="input_data_plane_proxy"></a> [data\_plane\_proxy](#input\_data\_plane\_proxy)
+
+Description: An object describing the data plane proxy configuration (access to the data plane via Azure Resource Manager). This includes the following properties:
+
+- `authentication_mode` - The authentication mode for the data plane proxy. Possible values are `"Local"` and `"Pass-through"`.
+- `private_link_delegation` - The private link delegation setting for the data plane proxy. Possible values are `"Enabled"` and `"Disabled"`.
+
+If not specified, the default values are:
+
+- `authentication_mode` = `"Pass-through"` (This mode is recommended. Microsoft Entra ID will be passed from Azure Resource Manager to App Configuration for authorization. Proper authorization for both Azure App Configuration and Azure Resource Manager are required.)
+- `private_link_delegation` = `"Disabled"`
+
+Type:
+
+```hcl
+object({
+    authentication_mode     = string
+    private_link_delegation = string
   })
 ```
 
@@ -134,6 +162,32 @@ If it is set to false, then no telemetry will be collected.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_key_values"></a> [key\_values](#input\_key\_values)
+
+Description: Map of objects containing App Configuration key-value attributes to create. The map key is deliberately arbitrary to ensure keys can always be known at plan time.
+
+Type:
+
+```hcl
+map(object({
+    key          = string
+    value        = string
+    content_type = optional(string, null)
+    label        = optional(string, null)
+    tags         = optional(map(string), null)
+  }))
+```
+
+Default: `{}`
+
+### <a name="input_local_auth_enabled"></a> [local\_auth\_enabled](#input\_local\_auth\_enabled)
+
+Description: Whether to enable local authentication. Set to `false` to only allow Entra authentication, default is `false`.
+
+Type: `bool`
+
+Default: `false`
 
 ### <a name="input_lock"></a> [lock](#input\_lock)
 
@@ -199,6 +253,7 @@ map(object({
     role_assignments = optional(map(object({
       role_definition_id_or_name             = string
       principal_id                           = string
+      principal_type                         = optional(string, null)
       description                            = optional(string, null)
       skip_service_principal_aad_check       = optional(bool, false)
       condition                              = optional(string, null)
@@ -235,12 +290,29 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_public_network_access_enabled"></a> [public\_network\_access\_enabled](#input\_public\_network\_access\_enabled)
+
+Description: Whether to enable public network access, default is `false`.
+
+Type: `bool`
+
+Default: `false`
+
+### <a name="input_purge_protection_enabled"></a> [purge\_protection\_enabled](#input\_purge\_protection\_enabled)
+
+Description: Whether to enable purge protection, default is `true`.
+
+Type: `bool`
+
+Default: `true`
+
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
 Description: A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
 
 - `role_definition_id_or_name` - The ID or name of the role definition to assign to the principal.
 - `principal_id` - The ID of the principal to assign the role to.
+- `principal_type` - (Optional) The type of the principal. Possible values are `User`, `Group`, and `ServicePrincipal`. It is necessary to explicitly set this attribute when creating role assignments if the principal creating the assignment is constrained by ABAC rules that filters on the PrincipalType attribute.
 - `description` - The description of the role assignment.
 - `skip_service_principal_aad_check` - If set to true, skips the Azure Active Directory check for the service principal in the tenant. Defaults to false.
 - `condition` - The condition which will be used to scope the role assignment.
@@ -254,6 +326,7 @@ Type:
 map(object({
     role_definition_id_or_name             = string
     principal_id                           = string
+    principal_type                         = optional(string, null)
     description                            = optional(string, null)
     skip_service_principal_aad_check       = optional(bool, false)
     condition                              = optional(string, null)
@@ -263,6 +336,22 @@ map(object({
 ```
 
 Default: `{}`
+
+### <a name="input_sku"></a> [sku](#input\_sku)
+
+Description: The SKU of the resource. Valid values are free, standard, and premium.
+
+Type: `string`
+
+Default: `"standard"`
+
+### <a name="input_soft_delete_retention_days"></a> [soft\_delete\_retention\_days](#input\_soft\_delete\_retention\_days)
+
+Description: The number of days that items are retained before being permanently deleted. Default is 7 days.
+
+Type: `number`
+
+Default: `7`
 
 ### <a name="input_tags"></a> [tags](#input\_tags)
 
@@ -276,13 +365,39 @@ Default: `null`
 
 The following outputs are exported:
 
-### <a name="output_private_endpoints"></a> [private\_endpoints](#output\_private\_endpoints)
+### <a name="output_name"></a> [name](#output\_name)
 
-Description:   A map of the private endpoints created.
+Description: The name of the resource.
+
+### <a name="output_private_endpoint_resource_ids"></a> [private\_endpoint\_resource\_ids](#output\_private\_endpoint\_resource\_ids)
+
+Description: A map of the private endpoints created to their resource ids.
+
+### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
+
+Description: The resource id of the resource.
 
 ## Modules
 
-No modules.
+The following Modules are called:
+
+### <a name="module_avm_interfaces"></a> [avm\_interfaces](#module\_avm\_interfaces)
+
+Source: Azure/avm-utl-interfaces/azure
+
+Version: 0.2.0
+
+### <a name="module_avm_interfaces_private_endpoints"></a> [avm\_interfaces\_private\_endpoints](#module\_avm\_interfaces\_private\_endpoints)
+
+Source: Azure/avm-utl-interfaces/azure
+
+Version: 0.2.0
+
+### <a name="module_key_values"></a> [key\_values](#module\_key\_values)
+
+Source: ./modules/keyvalue
+
+Version:
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
