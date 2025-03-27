@@ -1,3 +1,8 @@
+output "resource_id" {
+  description = "The resource ID of the App Configuration key."
+  value       = data.azurerm_app_configuration_key.this.id
+}
+
 output "value" {
   description = <<DESCRIPTION
 The value of the App Configuration key. The value is returned as a map with the following keys:
@@ -19,9 +24,4 @@ DESCRIPTION
     tags            = data.azurerm_app_configuration_key.this.tags
     etag            = data.azurerm_app_configuration_key.this.etag
   }
-}
-
-output "resource_id" {
-  description = "The resource ID of the App Configuration key."
-  value       = data.azurerm_app_configuration_key.this.id
 }

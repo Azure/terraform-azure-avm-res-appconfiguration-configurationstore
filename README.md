@@ -94,10 +94,15 @@ Default: `null`
 
 ### <a name="input_data_plane_proxy"></a> [data\_plane\_proxy](#input\_data\_plane\_proxy)
 
-Description: An object describing the data plane proxy configuration. This includes the following properties:
+Description: An object describing the data plane proxy configuration (access to the data plane via Azure Resource Manager). This includes the following properties:
 
-- `authentication_mode` - The authentication mode for the data plane proxy. Possible values are `"Local"` and `"Pass-Thru"`.
+- `authentication_mode` - The authentication mode for the data plane proxy. Possible values are `"Local"` and `"Pass-through"`.
 - `private_link_delegation` - The private link delegation setting for the data plane proxy. Possible values are `"Enabled"` and `"Disabled"`.
+
+If not specified, the default values are:
+
+- `authentication_mode` = `"Pass-through"` (This mode is recommended. Microsoft Entra ID will be passed from Azure Resource Manager to App Configuration for authorization. Proper authorization for both Azure App Configuration and Azure Resource Manager are required.)
+- `private_link_delegation` = `"Disabled"`
 
 Type:
 

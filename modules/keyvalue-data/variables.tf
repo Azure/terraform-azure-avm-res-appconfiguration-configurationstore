@@ -15,6 +15,6 @@ variable "key" {
 
 variable "label" {
   type        = string
-  description = "The label of the App Configuration key."
   default     = null
+  description = "The label of the App Configuration key."
 }

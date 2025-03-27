@@ -20,18 +20,18 @@ variable "value" {
 
 variable "content_type" {
   type        = string
+  default     = null
   description = "The content type of the App Configuration key's value, e.g. `application/json` or `text/plain`."
-  default     = null
-}
-
-variable "tags" {
-  type        = map(string)
-  description = "Tags to be applied to the App Configuration key."
-  default     = null
 }
 
 variable "label" {
   type        = string
-  description = "The label of the App Configuration key."
   default     = null
+  description = "The label of the App Configuration key."
+}
+
+variable "tags" {
+  type        = map(string)
+  default     = null
+  description = "Tags to be applied to the App Configuration key."
 }
