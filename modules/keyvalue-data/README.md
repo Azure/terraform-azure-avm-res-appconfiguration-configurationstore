@@ -59,13 +59,13 @@ Description: The resource ID of the App Configuration key.
 
 Description: The value of the App Configuration key. The value is returned as a map with the following keys:
 
-- content\_type - the content type of the key
-- value - the value of the key
-- locked - a boolean indicating if the key is locked
-- type - the type of the key, either `"kv"` or `"vault"`
-- vault\_reference - the vault reference if the key is of type `"vault"`
-- tags - the tags associated with the key
-- etag - the entity tag for the key, this is used to determine if the key has changed since it was last retrieved
+- `content_type` - the content type of the key
+- `value` - the value of the key
+- `locked` - a boolean indicating if the key is locked
+- `type` - the type of the key, either `"kv"` or `"vault"`
+- `vault_key_reference` - the vault reference if the key is of type `"vault"`
+- `tags` - the tags associated with the key
+- `etag` - the entity tag for the key, this is used to determine if the key has changed since it was last retrieved
 
 ## Modules
 
