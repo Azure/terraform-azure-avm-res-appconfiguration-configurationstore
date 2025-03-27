@@ -42,22 +42,6 @@ The following resources are used by this module:
 
 The following input variables are required:
 
-### <a name="input_key_values"></a> [key\_values](#input\_key\_values)
-
-Description: Map of objects containing App Configuration key-value attributes to create. The map key is deliberately arbitrary to ensure keys can always be known at plan time.
-
-Type:
-
-```hcl
-map(object({
-    key          = string
-    value        = string
-    content_type = optional(string, null)
-    label        = optional(string, null)
-    tags         = optional(map(string), null)
-  }))
-```
-
 ### <a name="input_location"></a> [location](#input\_location)
 
 Description: Azure region where the resource should be deployed.
@@ -178,6 +162,24 @@ If it is set to false, then no telemetry will be collected.
 Type: `bool`
 
 Default: `true`
+
+### <a name="input_key_values"></a> [key\_values](#input\_key\_values)
+
+Description: Map of objects containing App Configuration key-value attributes to create. The map key is deliberately arbitrary to ensure keys can always be known at plan time.
+
+Type:
+
+```hcl
+map(object({
+    key          = string
+    value        = string
+    content_type = optional(string, null)
+    label        = optional(string, null)
+    tags         = optional(map(string), null)
+  }))
+```
+
+Default: `{}`
 
 ### <a name="input_local_auth_enabled"></a> [local\_auth\_enabled](#input\_local\_auth\_enabled)
 
