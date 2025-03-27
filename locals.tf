@@ -3,7 +3,7 @@ locals {
     authenticationMode    = var.data_plane_proxy.authentication_mode
     privateLinkDelegation = var.data_plane_proxy.private_link_delegation
     } : {
-    authenticationMode    = "Local"
+    authenticationMode    = "Pass-through"
     privateLinkDelegation = "Disabled"
   }
   key_vault_properties = var.customer_managed_key == null ? null : {

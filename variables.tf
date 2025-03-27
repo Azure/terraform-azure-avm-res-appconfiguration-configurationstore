@@ -72,15 +72,20 @@ variable "data_plane_proxy" {
   })
   default     = null
   description = <<DESCRIPTION
-An object describing the data plane proxy configuration. This includes the following properties:
+An object describing the data plane proxy configuration (access to the data plane via Azure Resource Manager). This includes the following properties:
 
-- `authentication_mode` - The authentication mode for the data plane proxy. Possible values are `"Local"` and `"Pass-Thru"`.
+- `authentication_mode` - The authentication mode for the data plane proxy. Possible values are `"Local"` and `"Pass-through"`.
 - `private_link_delegation` - The private link delegation setting for the data plane proxy. Possible values are `"Enabled"` and `"Disabled"`.
+
+If not specified, the default values are:
+
+- `authentication_mode` = `"Pass-through"` (This mode is recommended. Microsoft Entra ID will be passed from Azure Resource Manager to App Configuration for authorization. Proper authorization for both Azure App Configuration and Azure Resource Manager are required.)
+- `private_link_delegation` = `"Disabled"`
 DESCRIPTION
 
   validation {
-    error_message = "Authenticaiton mode should be either 'Local' or 'Pass-Thru'."
-    condition     = var.data_plane_proxy == null ? true : contains(["Local", "Pass-Thru"], var.data_plane_proxy.authentication_mode)
+    error_message = "Authentication mode should be either 'Local' or 'Pass-through'."
+    condition     = var.data_plane_proxy == null ? true : contains(["Local", "Pass-through"], var.data_plane_proxy.authentication_mode)
   }
   validation {
     error_message = "Private link delegation should be either 'Enabled' or 'Disabled'."
