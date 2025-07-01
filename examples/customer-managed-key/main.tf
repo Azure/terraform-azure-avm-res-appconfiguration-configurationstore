@@ -85,7 +85,7 @@ module "key_vault" {
       role_assignments = {
         umi = {
           principal_id               = azapi_resource.umi.output.properties.principalId
-          role_definition_id_or_name = "Key Vault Crypto Service Encryption User"
+          role_definition_id_or_name = "Key Vault Crypto User"
           principal_type             = "ServicePrincipal"
         }
       }
