@@ -82,13 +82,6 @@ module "key_vault" {
       key_size = 4096
       key_opts = ["wrapKey", "unwrapKey", "sign", "verify", "encrypt", "decrypt"]
       enabled  = true
-      role_assignments = {
-        umi = {
-          principal_id               = azapi_resource.umi.output.properties.principalId
-          role_definition_id_or_name = "Key Vault Crypto User"
-          principal_type             = "ServicePrincipal"
-        }
-      }
     }
   }
   network_acls = {
@@ -98,6 +91,10 @@ module "key_vault" {
     admin = {
       principal_id               = data.azapi_client_config.current.object_id
       role_definition_id_or_name = "Key Vault Administrator"
+    }
+    umi = {
+      principal_id               = azapi_resource.umi.output.properties.principalId
+      role_definition_id_or_name = "Key Vault Crypto User"
       principal_type             = "ServicePrincipal"
     }
   }
@@ -114,7 +111,7 @@ module "test" {
   resource_group_resource_id      = azapi_resource.rg.id
   azapi_schema_validation_enabled = false
   customer_managed_key = {
-    key_name              = "cmk"
+    key_name              = split("/", module.key_vault.keys.cmk.id)[4]
     key_vault_resource_id = module.key_vault.resource_id
     user_assigned_identity = {
       resource_id = azapi_resource.umi.id
