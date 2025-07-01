@@ -6,7 +6,7 @@ variable "key_values" {
     label        = optional(string, null)
     tags         = optional(map(string), null)
   }))
+  default     = {}
   description = "Map of objects containing App Configuration key-value attributes to create. The map key is deliberately arbitrary to ensure keys can always be known at plan time."
   nullable    = false
-  default     = {}
 }

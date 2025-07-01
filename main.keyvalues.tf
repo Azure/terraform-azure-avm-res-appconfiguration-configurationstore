@@ -1,6 +1,5 @@
 module "key_values" {
-  source = "./modules/keyvalue"
-
+  source   = "./modules/keyvalue"
   for_each = var.key_values
 
   configuration_store_resource_id = azapi_resource.this.id

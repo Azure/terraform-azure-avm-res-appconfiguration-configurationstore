@@ -385,13 +385,13 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.2.0
+Version: 0.3.0
 
 ### <a name="module_avm_interfaces_private_endpoints"></a> [avm\_interfaces\_private\_endpoints](#module\_avm\_interfaces\_private\_endpoints)
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.2.0
+Version: 0.3.0
 
 ### <a name="module_key_values"></a> [key\_values](#module\_key\_values)
 

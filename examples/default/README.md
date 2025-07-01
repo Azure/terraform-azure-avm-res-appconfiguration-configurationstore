@@ -6,6 +6,7 @@ This deploys the module in its simplest form.
 ```hcl
 terraform {
   required_version = "~> 1.9"
+
   required_providers {
     azapi = {
       source  = "Azure/azapi"
@@ -29,8 +30,9 @@ provider "azurerm" {
 ## Section to provide a random Azure region for the resource group
 # This allows us to randomize the region for the resource group.
 module "regions" {
-  source           = "Azure/avm-utl-regions/azurerm"
-  version          = "0.3.0"
+  source  = "Azure/avm-utl-regions/azurerm"
+  version = "0.3.0"
+
   enable_telemetry = var.enable_telemetry
 }
 
@@ -49,9 +51,9 @@ module "naming" {
 
 # This is required for resource modules
 resource "azapi_resource" "rg" {
-  type                      = "Microsoft.Resources/resourceGroups@2021-04-01"
   location                  = module.regions.regions[random_integer.region_index.result].name
   name                      = module.naming.resource_group.name_unique
+  type                      = "Microsoft.Resources/resourceGroups@2021-04-01"
   schema_validation_enabled = false
 }
 
@@ -61,6 +63,7 @@ resource "azapi_resource" "rg" {
 # with a data source.
 module "test" {
   source = "../../"
+
   # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
   # ...
   location                        = azapi_resource.rg.location
