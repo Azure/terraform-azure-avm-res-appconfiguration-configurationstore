@@ -1,5 +1,8 @@
 resource "azapi_resource" "this" {
-  type = "Microsoft.AppConfiguration/configurationStores@2024-05-01"
+  location  = var.location
+  name      = var.name
+  parent_id = var.resource_group_resource_id
+  type      = "Microsoft.AppConfiguration/configurationStores@2024-05-01"
   body = {
     sku = {
       name = var.sku
@@ -16,9 +19,6 @@ resource "azapi_resource" "this" {
       softDeleteRetentionInDays = var.soft_delete_retention_days
     }
   }
-  location                  = var.location
-  name                      = var.name
-  parent_id                 = var.resource_group_resource_id
   schema_validation_enabled = var.azapi_schema_validation_enabled
   tags                      = var.tags
 

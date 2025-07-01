@@ -1,5 +1,6 @@
 terraform {
   required_version = "~> 1.9"
+
   required_providers {
     azapi = {
       source  = "Azure/azapi"
@@ -25,8 +26,9 @@ data "azapi_client_config" "current" {}
 ## Section to provide a random Azure region for the resource group
 # This allows us to randomize the region for the resource group.
 module "regions" {
-  source           = "Azure/avm-utl-regions/azurerm"
-  version          = "0.3.0"
+  source  = "Azure/avm-utl-regions/azurerm"
+  version = "0.3.0"
+
   enable_telemetry = var.enable_telemetry
 }
 
@@ -45,18 +47,18 @@ module "naming" {
 
 # This is required for resource modules
 resource "azapi_resource" "rg" {
-  type                      = "Microsoft.Resources/resourceGroups@2021-04-01"
   location                  = module.regions.regions[random_integer.region_index.result].name
   name                      = module.naming.resource_group.name_unique
+  type                      = "Microsoft.Resources/resourceGroups@2021-04-01"
   schema_validation_enabled = false
 }
 
 # user-assigned managed identity
 resource "azapi_resource" "umi" {
-  type      = "Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30"
   location  = azapi_resource.rg.location
   name      = module.naming.user_assigned_identity.name_unique
   parent_id = azapi_resource.rg.id
+  type      = "Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30"
   response_export_values = [
     "properties.principalId",
     "properties.clientId",
@@ -66,22 +68,13 @@ resource "azapi_resource" "umi" {
 
 # key vault & key
 module "key_vault" {
-  source              = "Azure/avm-res-keyvault-vault/azurerm"
-  version             = "0.10.0"
+  source  = "Azure/avm-res-keyvault-vault/azurerm"
+  version = "0.10.0"
+
+  location            = azapi_resource.rg.location
   name                = module.naming.key_vault.name_unique
   resource_group_name = azapi_resource.rg.name
-  location            = azapi_resource.rg.location
   tenant_id           = data.azapi_client_config.current.tenant_id
-  network_acls = {
-    default_action = "Allow"
-  }
-  role_assignments = {
-    admin = {
-      principal_id               = data.azapi_client_config.current.object_id
-      role_definition_id_or_name = "Key Vault Administrator"
-      principal_type             = "User"
-    }
-  }
   keys = {
     cmk = {
       name     = "cmk"
@@ -98,18 +91,28 @@ module "key_vault" {
       }
     }
   }
+  network_acls = {
+    default_action = "Allow"
+  }
+  role_assignments = {
+    admin = {
+      principal_id               = data.azapi_client_config.current.object_id
+      role_definition_id_or_name = "Key Vault Administrator"
+      principal_type             = "User"
+    }
+  }
 }
 
 # This is the module call
 module "test" {
   source = "../../"
+
   # source             = "Azure/avm-<res/ptn>-<name>/azurerm"
   # ...
   location                        = azapi_resource.rg.location
   name                            = module.naming.app_configuration.name_unique
   resource_group_resource_id      = azapi_resource.rg.id
   azapi_schema_validation_enabled = false
-  enable_telemetry                = var.enable_telemetry
   customer_managed_key = {
     key_name              = "cmk"
     key_vault_resource_id = module.key_vault.resource_id
@@ -117,6 +120,7 @@ module "test" {
       resource_id = azapi_resource.umi.id
     }
   }
+  enable_telemetry = var.enable_telemetry
   managed_identities = {
     user_assigned_resource_ids = [
       azapi_resource.umi.id
