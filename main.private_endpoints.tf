@@ -28,7 +28,7 @@ module "avm_interfaces_private_endpoints" {
 }
 
 resource "azapi_resource" "private_endpoint_lock" {
-  for_each = { for k, v in module.avm_interfaces_private_endpoints : k => v.lock if v.lock != null }
+  for_each = { for k, v in module.avm_interfaces_private_endpoints : k => v.lock if try(v.lock, null) != null }
 
   name      = each.value.name
   parent_id = azapi_resource.private_endpoints[each.key].id
@@ -43,4 +43,8 @@ resource "azapi_resource" "private_endpoint_role_assignments" {
   parent_id = azapi_resource.private_endpoints[each.value.parent_key].id
   type      = each.value.child_value.type
   body      = each.value.child_value.body
+}
+
+output "test" {
+  value = module.avm_interfaces.private_endpoints_azapi
 }
