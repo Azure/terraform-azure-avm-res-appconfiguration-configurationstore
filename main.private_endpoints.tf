@@ -45,6 +45,3 @@ resource "azapi_resource" "private_endpoint_role_assignments" {
   body      = each.value.child_value.body
 }
 
-output "test" {
-  value = module.avm_interfaces.private_endpoints_azapi
-}

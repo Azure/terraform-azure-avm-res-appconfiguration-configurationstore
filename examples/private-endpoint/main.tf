@@ -84,12 +84,12 @@ module "vnet" {
 }
 
 module "private_dns_zones" {
-  source   = "Azure/avm-res-network-privatednszone/azurerm"
-  version  = "0.3.4"
+  source  = "Azure/avm-res-network-privatednszone/azurerm"
+  version = "0.3.4"
 
-  domain_name           = "privatelink.azconfig.io"
-  resource_group_name   = azapi_resource.rg.name
-  enable_telemetry      = var.enable_telemetry
+  domain_name         = "privatelink.azconfig.io"
+  resource_group_name = azapi_resource.rg.name
+  enable_telemetry    = var.enable_telemetry
   virtual_network_links = {
     vnet_link = {
       vnetlinkname     = "${module.vnet.name}-link"
@@ -109,20 +109,14 @@ module "test" {
   name                            = module.naming.app_configuration.name_unique
   resource_group_resource_id      = azapi_resource.rg.id
   azapi_schema_validation_enabled = false
-  public_network_access_enabled = true
-
+  enable_telemetry                = var.enable_telemetry
   private_endpoints = {
     app_configuration = {
       private_dns_zone_resource_ids = [module.private_dns_zones.resource_id]
       subnet_resource_id            = module.vnet.subnets["pe_subnet"].resource_id
     }
   }
-
-  enable_telemetry = var.enable_telemetry
-
+  public_network_access_enabled = true
 }
 
 
-output "test" {
-  value = module.test
-}

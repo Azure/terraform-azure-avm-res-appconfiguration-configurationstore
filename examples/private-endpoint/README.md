@@ -1,7 +1,7 @@
 <!-- BEGIN_TF_DOCS -->
 # Customer managed key example
 
-This deploys the module with a CMK.
+This deploys the module with a private endpoint.
 
 ```hcl
 terraform {
@@ -72,36 +72,35 @@ resource "azapi_resource" "umi" {
   schema_validation_enabled = false
 }
 
-# key vault & key
-module "key_vault" {
-  source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.10.0"
+# vnet
+module "vnet" {
+  source  = "Azure/avm-res-network-virtualnetwork/azurerm"
+  version = "=0.8.1"
 
+  address_space       = ["10.0.0.0/16"]
   location            = azapi_resource.rg.location
-  name                = module.naming.key_vault.name_unique
   resource_group_name = azapi_resource.rg.name
-  tenant_id           = data.azapi_client_config.current.tenant_id
-  keys = {
-    cmk = {
-      name     = "cmk"
-      key_type = "RSA"
-      key_size = 4096
-      key_opts = ["wrapKey", "unwrapKey", "sign", "verify", "encrypt", "decrypt"]
-      enabled  = true
+  name                = module.naming.virtual_network.name_unique
+  subnets = {
+    pe_subnet = {
+      name             = "${module.naming.subnet.name_unique}-1"
+      address_prefixes = ["10.0.1.0/24"]
     }
   }
-  network_acls = {
-    default_action = "Allow"
-  }
-  role_assignments = {
-    admin = {
-      principal_id               = data.azapi_client_config.current.object_id
-      role_definition_id_or_name = "Key Vault Administrator"
-    }
-    umi = {
-      principal_id               = azapi_resource.umi.output.properties.principalId
-      role_definition_id_or_name = "Key Vault Crypto User"
-      principal_type             = "ServicePrincipal"
+}
+
+module "private_dns_zones" {
+  source  = "Azure/avm-res-network-privatednszone/azurerm"
+  version = "0.3.4"
+
+  domain_name         = "privatelink.azconfig.io"
+  resource_group_name = azapi_resource.rg.name
+  enable_telemetry    = var.enable_telemetry
+  virtual_network_links = {
+    vnet_link = {
+      vnetlinkname     = "${module.vnet.name}-link"
+      vnetid           = module.vnet.resource_id
+      autoregistration = false
     }
   }
 }
@@ -116,20 +115,17 @@ module "test" {
   name                            = module.naming.app_configuration.name_unique
   resource_group_resource_id      = azapi_resource.rg.id
   azapi_schema_validation_enabled = false
-  customer_managed_key = {
-    key_name              = split("/", module.key_vault.keys.cmk.id)[4]
-    key_vault_resource_id = module.key_vault.resource_id
-    user_assigned_identity = {
-      resource_id = azapi_resource.umi.id
+  enable_telemetry                = var.enable_telemetry
+  private_endpoints = {
+    app_configuration = {
+      private_dns_zone_resource_ids = [module.private_dns_zones.resource_id]
+      subnet_resource_id            = module.vnet.subnets["pe_subnet"].resource_id
     }
   }
-  enable_telemetry = var.enable_telemetry
-  managed_identities = {
-    user_assigned_resource_ids = [
-      azapi_resource.umi.id
-    ]
-  }
+  public_network_access_enabled = true
 }
+
+
 ```
 
 <!-- markdownlint-disable MD033 -->
@@ -175,23 +171,27 @@ Default: `true`
 
 ## Outputs
 
-No outputs.
+The following outputs are exported:
+
+### <a name="output_test"></a> [test](#output\_test)
+
+Description: n/a
 
 ## Modules
 
 The following Modules are called:
-
-### <a name="module_key_vault"></a> [key\_vault](#module\_key\_vault)
-
-Source: Azure/avm-res-keyvault-vault/azurerm
-
-Version: 0.10.0
 
 ### <a name="module_naming"></a> [naming](#module\_naming)
 
 Source: Azure/naming/azurerm
 
 Version: ~> 0.4.2
+
+### <a name="module_private_dns_zones"></a> [private\_dns\_zones](#module\_private\_dns\_zones)
+
+Source: Azure/avm-res-network-privatednszone/azurerm
+
+Version: 0.3.4
 
 ### <a name="module_regions"></a> [regions](#module\_regions)
 
@@ -204,6 +204,12 @@ Version: 0.3.0
 Source: ../../
 
 Version:
+
+### <a name="module_vnet"></a> [vnet](#module\_vnet)
+
+Source: Azure/avm-res-network-virtualnetwork/azurerm
+
+Version: =0.8.1
 
 <!-- markdownlint-disable-next-line MD041 -->
 ## Data Collection
