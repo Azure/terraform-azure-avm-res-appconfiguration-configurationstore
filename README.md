@@ -395,7 +395,7 @@ Version: 0.3.0
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.3.0
+Version: 0.4.0
 
 ### <a name="module_key_values"></a> [key\_values](#module\_key\_values)
 
