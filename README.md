@@ -389,7 +389,7 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.3.0
+Version: 0.4.0
 
 ### <a name="module_avm_interfaces_private_endpoints"></a> [avm\_interfaces\_private\_endpoints](#module\_avm\_interfaces\_private\_endpoints)
 
