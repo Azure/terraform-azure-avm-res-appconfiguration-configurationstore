@@ -1,6 +1,6 @@
 module "avm_interfaces" {
   source  = "Azure/avm-utl-interfaces/azure"
-  version = "0.3.0"
+  version = "0.4.0"
 
   customer_managed_key                    = var.customer_managed_key
   diagnostic_settings                     = var.diagnostic_settings
