@@ -21,7 +21,7 @@ resource "azapi_resource" "private_dns_zone_groups" {
 module "avm_interfaces_private_endpoints" {
   source   = "Azure/avm-utl-interfaces/azure"
   version  = "0.4.0"
-  for_each = var.private_endpoints
+  for_each = local.private_endpoints
 
   lock             = each.value.lock
   role_assignments = each.value.role_assignments

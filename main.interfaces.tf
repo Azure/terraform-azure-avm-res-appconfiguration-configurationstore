@@ -7,7 +7,7 @@ module "avm_interfaces" {
   enable_telemetry                        = var.enable_telemetry
   lock                                    = var.lock
   managed_identities                      = var.managed_identities
-  private_endpoints                       = var.private_endpoints
+  private_endpoints                       = local.private_endpoints
   private_endpoints_manage_dns_zone_group = var.private_endpoints_manage_dns_zone_group
   private_endpoints_scope                 = "${var.resource_group_resource_id}/providers/Microsoft.AppConfiguration/configurationStores/${var.name}"
   role_assignment_definition_scope        = var.resource_group_resource_id
