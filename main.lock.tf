@@ -10,3 +10,21 @@ resource "azapi_resource" "lock" {
   read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
+
+resource "azapi_resource" "lock_pe" {
+  for_each = module.avm_interfaces.lock_private_endpoint_azapi
+
+  name           = each.value.name
+  parent_id      = azapi_resource.private_endpoints[each.key].id
+  type           = each.value.type
+  body           = each.value.body
+  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+
+  depends_on = [
+    azapi_resource.private_dns_zone_groups,
+    azapi_resource.private_endpoint_role_assignments,
+  ]
+}
