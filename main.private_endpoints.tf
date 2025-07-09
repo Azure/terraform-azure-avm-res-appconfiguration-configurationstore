@@ -3,7 +3,7 @@ resource "azapi_resource" "private_endpoints" {
 
   location  = azapi_resource.this.location
   name      = each.value.name
-  parent_id = azapi_resource.this.id
+  parent_id = var.resource_group_resource_id
   type      = each.value.type
   body      = each.value.body
   tags      = each.value.tags
