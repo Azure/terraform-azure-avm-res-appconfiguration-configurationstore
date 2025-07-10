@@ -14,7 +14,3 @@ output "resource_id" {
   description = "The resource id of the resource."
   value       = azapi_resource.this.id
 }
-
-output "test" {
-  value = module.avm_interfaces.private_endpoints_azapi
-}

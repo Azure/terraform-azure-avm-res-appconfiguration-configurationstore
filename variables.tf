@@ -246,8 +246,6 @@ DESCRIPTION
 
 # This variable is used to determine if the private_dns_zone_group block should be included,
 # or if it is to be managed externally, e.g. using Azure Policy.
-# https://github.com/Azure/terraform-azurerm-avm-res-keyvault-vault/issues/32
-# Alternatively you can use AzAPI, which does not have this issue.
 variable "private_endpoints_manage_dns_zone_group" {
   type        = bool
   default     = true
