@@ -367,21 +367,21 @@ Default: `null`
 
 The following outputs are exported:
 
+### <a name="output_endpoint"></a> [endpoint](#output\_endpoint)
+
+Description: The default hostname of the resource.
+
 ### <a name="output_name"></a> [name](#output\_name)
 
 Description: The name of the resource.
 
+### <a name="output_private_endpoint_network_interface_ids"></a> [private\_endpoint\_network\_interface\_ids](#output\_private\_endpoint\_network\_interface\_ids)
+
+Description: A map of the private endpoints created to their network interface ids.
+
 ### <a name="output_private_endpoint_resource_ids"></a> [private\_endpoint\_resource\_ids](#output\_private\_endpoint\_resource\_ids)
 
 Description: A map of the private endpoints created to their resource ids.
-
-### <a name="output_private_endpoints"></a> [private\_endpoints](#output\_private\_endpoints)
-
-Description: A map of private endpoints. The map key is the supplied input to var.private\_endpoints. The map value is the entire azapi\_resource.private\_endpoints resource.
-
-### <a name="output_resource"></a> [resource](#output\_resource)
-
-Description: The full resource object.
 
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
