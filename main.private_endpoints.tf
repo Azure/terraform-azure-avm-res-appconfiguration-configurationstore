@@ -1,16 +1,17 @@
 resource "azapi_resource" "private_endpoints" {
   for_each = module.avm_interfaces.private_endpoints_azapi
 
-  location       = azapi_resource.this.location
-  name           = each.value.name
-  parent_id      = var.resource_group_resource_id
-  type           = each.value.type
-  body           = each.value.body
-  create_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  tags           = each.value.tags
-  update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  location               = azapi_resource.this.location
+  name                   = each.value.name
+  parent_id              = var.resource_group_resource_id
+  type                   = each.value.type
+  body                   = each.value.body
+  create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+  response_export_values = ["*"]
+  tags                   = each.value.tags
+  update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
 
 resource "azapi_resource" "private_dns_zone_groups" {

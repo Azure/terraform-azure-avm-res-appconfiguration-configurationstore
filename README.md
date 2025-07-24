@@ -375,6 +375,14 @@ Description: The name of the resource.
 
 Description: A map of the private endpoints created to their resource ids.
 
+### <a name="output_private_endpoints"></a> [private\_endpoints](#output\_private\_endpoints)
+
+Description: A map of private endpoints. The map key is the supplied input to var.private\_endpoints. The map value is the entire azapi\_resource.private\_endpoints resource.
+
+### <a name="output_resource"></a> [resource](#output\_resource)
+
+Description: The full resource object.
+
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The resource id of the resource.
