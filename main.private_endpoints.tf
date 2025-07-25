@@ -9,7 +9,7 @@ resource "azapi_resource" "private_endpoints" {
   create_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   delete_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   read_headers           = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
-  response_export_values = ["*"]
+  response_export_values = ["properties.networkInterfaces"]
   tags                   = each.value.tags
   update_headers         = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
 }
