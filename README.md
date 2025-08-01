@@ -360,7 +360,7 @@ Default: `{}`
 
 ### <a name="input_sku"></a> [sku](#input\_sku)
 
-Description: The SKU of the resource. Valid values are free, standard, and premium.
+Description: The SKU of the resource. Valid values are free, developer, standard, and premium. Set `soft_delete_retention_days` to `null` for free sku.
 
 Type: `string`
 

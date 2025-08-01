@@ -313,12 +313,12 @@ DESCRIPTION
 variable "sku" {
   type        = string
   default     = "standard"
-  description = "The SKU of the resource. Valid values are free, standard, and premium."
+  description = "The SKU of the resource. Valid values are free, developer, standard, and premium. Set `soft_delete_retention_days` to `null` for free sku."
   nullable    = false
 
   validation {
     error_message = "SKU must be one of free, standard, or premium."
-    condition     = contains(["free", "standard", "premium"], var.sku)
+    condition     = contains(["free", "developer", "standard", "premium"], var.sku)
   }
 }
 
@@ -326,11 +326,10 @@ variable "soft_delete_retention_days" {
   type        = number
   default     = 7
   description = "The number of days that items are retained before being permanently deleted. Default is 7 days."
-  nullable    = false
 
   validation {
     error_message = "Must be a positive integer"
-    condition     = var.soft_delete_retention_days > 0 && floor(var.soft_delete_retention_days) == var.soft_delete_retention_days
+    condition     = var.soft_delete_retention_days != null ? var.soft_delete_retention_days > 0 && floor(var.soft_delete_retention_days) == var.soft_delete_retention_days : true
   }
 }
 
