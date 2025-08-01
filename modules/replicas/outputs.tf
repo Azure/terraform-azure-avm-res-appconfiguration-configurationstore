@@ -1,7 +1,9 @@
 output "name" {
-  value = azapi_resource.this.name
+  description = "The name of the resource."
+  value       = azapi_resource.this.name
 }
 
 output "resource_id" {
-  value = azapi_resource.this.id
+  description = "The resource id of the resource."
+  value       = azapi_resource.this.id
 }

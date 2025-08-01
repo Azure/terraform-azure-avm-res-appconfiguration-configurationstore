@@ -8,6 +8,8 @@ Deploys an Azure App Configuration Store replica.
 
 The following requirements are needed by this module:
 
+- <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (~> 1.9)
+
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.0)
 
 ## Resources
@@ -49,11 +51,11 @@ The following outputs are exported:
 
 ### <a name="output_name"></a> [name](#output\_name)
 
-Description: n/a
+Description: The name of the resource.
 
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
-Description: n/a
+Description: The resource id of the resource.
 
 ## Modules
 
