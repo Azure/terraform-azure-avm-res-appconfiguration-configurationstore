@@ -9,6 +9,12 @@ resource "azapi_resource" "lock" {
   delete_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   read_headers   = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
   update_headers = var.enable_telemetry ? { "User-Agent" : local.avm_azapi_header } : null
+
+  depends_on = [
+    module.replica,
+    azapi_resource.role_assignments,
+    azapi_resource.diag_settings,
+  ]
 }
 
 resource "azapi_resource" "lock_pe" {

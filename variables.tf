@@ -267,6 +267,21 @@ variable "purge_protection_enabled" {
   nullable    = false
 }
 
+variable "replicas" {
+  type = map(object({
+    name     = string
+    location = string
+  }))
+  default     = {}
+  description = <<DESCRIPTION
+A map of replicas to create for the App Configuration store. Each replica must have a unique name within the map.
+
+- `name` - The name of the replica.
+- `location` - The location of the replica.
+DESCRIPTION
+  nullable    = false
+}
+
 variable "role_assignments" {
   type = map(object({
     role_definition_id_or_name             = string
