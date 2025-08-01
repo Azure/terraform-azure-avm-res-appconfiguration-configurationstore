@@ -309,6 +309,24 @@ Type: `bool`
 
 Default: `true`
 
+### <a name="input_replicas"></a> [replicas](#input\_replicas)
+
+Description: A map of replicas to create for the App Configuration store. Each replica must have a unique name within the map.
+
+- `name` - The name of the replica.
+- `location` - The location of the replica.
+
+Type:
+
+```hcl
+map(object({
+    name     = string
+    location = string
+  }))
+```
+
+Default: `{}`
+
 ### <a name="input_role_assignments"></a> [role\_assignments](#input\_role\_assignments)
 
 Description: A map of role assignments to create on this resource. The map key is deliberately arbitrary to avoid issues where map keys maybe unknown at plan time.
@@ -384,6 +402,14 @@ Description: A map of the private endpoints created to their network interface i
 
 Description: A map of the private endpoints created to their resource ids.
 
+### <a name="output_replica_names"></a> [replica\_names](#output\_replica\_names)
+
+Description: A map of the replicas created to their names.
+
+### <a name="output_replica_resource_ids"></a> [replica\_resource\_ids](#output\_replica\_resource\_ids)
+
+Description: A map of the replicas created to their resource ids.
+
 ### <a name="output_resource_id"></a> [resource\_id](#output\_resource\_id)
 
 Description: The resource id of the resource.
@@ -407,6 +433,12 @@ Version: 0.5.0
 ### <a name="module_key_values"></a> [key\_values](#module\_key\_values)
 
 Source: ./modules/keyvalue
+
+Version:
+
+### <a name="module_replica"></a> [replica](#module\_replica)
+
+Source: ./modules/replicas
 
 Version:
 
