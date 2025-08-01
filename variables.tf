@@ -303,7 +303,7 @@ variable "sku" {
 
   validation {
     error_message = "SKU must be one of free, standard, or premium."
-    condition     = contains(["free", "standard", "premium"], var.sku)
+    condition     = contains(["free", "developer", "standard", "premium"], var.sku)
   }
 }
 
