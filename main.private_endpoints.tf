@@ -32,6 +32,7 @@ module "avm_interfaces_private_endpoints" {
   version  = "0.5.0"
   for_each = local.private_endpoints
 
+  enable_telemetry = var.enable_telemetry
   lock             = each.value.lock
   role_assignments = each.value.role_assignments
 }
