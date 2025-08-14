@@ -328,8 +328,8 @@ variable "soft_delete_retention_days" {
   description = "The number of days that items are retained before being permanently deleted. Default is 7 days."
 
   validation {
-    error_message = "Must be a positive integer"
-    condition     = var.soft_delete_retention_days != null ? var.soft_delete_retention_days > 0 && floor(var.soft_delete_retention_days) == var.soft_delete_retention_days : true
+    error_message = "Must be a positive integer or 0"
+    condition     = var.soft_delete_retention_days != null ? var.soft_delete_retention_days >= 0 && floor(var.soft_delete_retention_days) == var.soft_delete_retention_days : true
   }
 }
 
