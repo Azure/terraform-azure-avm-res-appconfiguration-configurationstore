@@ -36,7 +36,7 @@ module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
   version = "0.3.0"
 
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry = false
 }
 
 # This allows us to randomize the region for the resource group.
@@ -83,6 +83,7 @@ module "key_vault" {
   name                = module.naming.key_vault.name_unique
   resource_group_name = azapi_resource.rg.name
   tenant_id           = data.azapi_client_config.current.tenant_id
+  enable_telemetry    = false
   keys = {
     cmk = {
       name     = "cmk"
@@ -125,7 +126,7 @@ module "test" {
       resource_id = azapi_resource.umi.id
     }
   }
-  enable_telemetry = var.enable_telemetry
+  enable_telemetry = false
   managed_identities = {
     user_assigned_resource_ids = [
       azapi_resource.umi.id
