@@ -1,0 +1,6 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "keyvalue-data",
+  "moduleDescription": "This submodule allows you to query an existing App Configuration Store and retrieve key-value pairs.",
+  "canonicalType": "helper"
+}
