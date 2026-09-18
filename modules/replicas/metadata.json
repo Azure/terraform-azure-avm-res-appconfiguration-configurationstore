@@ -1,0 +1,7 @@
+{
+  "$schema": "https://raw.githubusercontent.com/Azure/azure-verified-modules-tools/main/src/Avm.Authoring/Resources/Schemas/v1/avm-module-metadata.schema.json",
+  "moduleDisplayName": "App Configuration Store Replica",
+  "moduleDescription": "Deploys an Azure App Configuration Store replica.",
+  "canonicalType": "Microsoft.AppConfiguration/configurationStores/replicas",
+  "telemetryIdPrefix": "46d3xtrf.res.1b0465a"
+}
