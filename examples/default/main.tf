@@ -27,7 +27,7 @@ module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
   version = "0.3.0"
 
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
 }
 
 # This allows us to randomize the region for the resource group.
@@ -65,5 +65,5 @@ module "test" {
   name                            = module.naming.app_configuration.name_unique
   resource_group_resource_id      = azapi_resource.rg.id
   azapi_schema_validation_enabled = false
-  enable_telemetry                = false
+  enable_telemetry                = var.enable_telemetry
 }

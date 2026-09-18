@@ -27,7 +27,7 @@ module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
   version = "0.7.0"
 
-  enable_telemetry = false
+  enable_telemetry = var.enable_telemetry
   has_pair         = true
 }
 
@@ -70,7 +70,7 @@ module "test" {
   name                            = module.naming.app_configuration.name_unique
   resource_group_resource_id      = azapi_resource.rg.id
   azapi_schema_validation_enabled = false
-  enable_telemetry                = false
+  enable_telemetry                = var.enable_telemetry
   replicas = {
     paired_region = {
       name     = "PairedRegion"
