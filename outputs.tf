@@ -34,3 +34,8 @@ output "resource_id" {
   description = "The resource id of the resource."
   value       = azapi_resource.this.id
 }
+
+output "system_assigned_mi_principal_id" {
+  description = "The system assigned managed identity of the resource"
+  value       = try(azapi_resource.this.identity[0].principal_id, null)
+}
