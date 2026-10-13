@@ -4,7 +4,7 @@ variable "configuration_store_resource_id" {
 
   validation {
     error_message = "Value must be a valid App Configuration store resource ID."
-    condition     = can(regex("^/subscriptions/[^/]+/resourceGroups/[^/]+/providers/Microsoft.AppConfiguration/configurationStores/[^/]+$", var.configuration_store_resource_id))
+    condition     = can(provider::azapi::parse_resource_id("Microsoft.AppConfiguration/configurationStores", var.configuration_store_resource_id))
   }
 }
 
