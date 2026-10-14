@@ -14,15 +14,20 @@ resource "azapi_resource" "lock" {
 }
 
 resource "azapi_resource" "lock_pe" {
-  for_each = module.avm_interfaces.lock_private_endpoint_azapi
+  for_each = local.private_endpoint_locks
 
-  name      = each.value.name
+  name      = coalesce(each.value.name, "lock-${each.value.body.properties.level}")
   parent_id = azapi_resource.private_endpoints[each.key].id
   type      = each.value.type
-  body      = each.value.body
+  body = merge(each.value.body, {
+    properties = {
+      for k, v in each.value.body.properties : k => v
+      if k != "notes" || v != null
+    }
+  })
 
   depends_on = [
     azapi_resource.private_dns_zone_groups,
-    azapi_resource.private_endpoint_role_assignments,
+    azapi_resource.role_assignments_pe,
   ]
 }
