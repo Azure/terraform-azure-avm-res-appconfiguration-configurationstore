@@ -13,6 +13,12 @@ variable "key" {
   description = "The key name for the App Configuration key."
 }
 
+variable "location" {
+  type        = string
+  description = "The Azure region for this module's resources or telemetry deployment."
+  nullable    = false
+}
+
 variable "value" {
   type        = string
   description = "The value of the App Configuration key."
@@ -22,6 +28,17 @@ variable "content_type" {
   type        = string
   default     = null
   description = "The content type of the App Configuration key's value, e.g. `application/json` or `text/plain`."
+}
+
+variable "enable_telemetry" {
+  type        = bool
+  default     = true
+  description = <<DESCRIPTION
+This variable controls whether or not telemetry is enabled for the module.
+For more information see <https://aka.ms/avm/telemetryinfo>.
+If it is set to false, then no telemetry will be collected.
+DESCRIPTION
+  nullable    = false
 }
 
 variable "label" {
