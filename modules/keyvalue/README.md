@@ -5,6 +5,21 @@
 This submodule allows you to create and manage key-value pairs in an App Configuration Store.
 Only native key-value pairs are supported, it is not possible to create key-value pairs that are backed with Azure Key Vault references.
 
+## Direct caller migration
+
+`location` is now required for direct callers, even when `enable_telemetry = false`. Parent-module callers already receive this value through the root module. Telemetry is enabled by default and can be disabled with `enable_telemetry = false`.
+
+```hcl
+module "key_value" {
+  source = "Azure/avm-res-appconfiguration-configurationstore/azure//modules/keyvalue"
+
+  configuration_store_resource_id = var.configuration_store_resource_id
+  key                             = "example"
+  location                        = "eastus"
+  value                           = "example-value"
+}
+```
+
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
@@ -20,7 +35,10 @@ The following requirements are needed by this module:
 
 The following resources are used by this module:
 
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azurerm_app_configuration_key.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_configuration_key) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
+- [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -36,6 +54,12 @@ Type: `string`
 ### <a name="input_key"></a> [key](#input\_key)
 
 Description: The key name for the App Configuration key.
+
+Type: `string`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
 
 Type: `string`
 
@@ -56,6 +80,16 @@ Description: The content type of the App Configuration key's value, e.g. `applic
 Type: `string`
 
 Default: `null`
+
+### <a name="input_enable_telemetry"></a> [enable\_telemetry](#input\_enable\_telemetry)
+
+Description: This variable controls whether or not telemetry is enabled for the module.  
+For more information see <https://aka.ms/avm/telemetryinfo>.  
+If it is set to false, then no telemetry will be collected.
+
+Type: `bool`
+
+Default: `true`
 
 ### <a name="input_label"></a> [label](#input\_label)
 

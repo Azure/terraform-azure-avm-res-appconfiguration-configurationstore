@@ -31,10 +31,14 @@ mock_provider "azapi" {
       }
     }
   }
+  mock_data "azapi_client_config" {
+    defaults = {
+      subscription_resource_id = "/subscriptions/00000000-0000-0000-0000-000000000000"
+    }
+  }
 }
 
 mock_provider "azurerm" {}
-mock_provider "modtm" {}
 
 mock_provider "random" {
   mock_resource "random_uuid" {
@@ -68,8 +72,8 @@ run "empty_endpoints_create_no_satellites" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   assert {
@@ -88,8 +92,8 @@ run "default_endpoint_preserves_names_scope_and_body" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -157,8 +161,8 @@ run "null_overrides_use_legacy_defaults" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -195,8 +199,8 @@ run "independent_location_and_group_overrides" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -246,8 +250,8 @@ run "subresource_and_ip_members_are_forwarded" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -289,8 +293,8 @@ run "existing_named_settings_and_dns_are_preserved" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -343,8 +347,8 @@ run "external_dns_management_creates_no_groups" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -371,8 +375,8 @@ run "endpoint_locks_honor_names_notes_and_defaults" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -419,8 +423,8 @@ run "endpoint_roles_keep_keys_and_use_the_correct_parent" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   override_resource {
@@ -509,8 +513,8 @@ run "store_roles_retain_the_existing_deterministic_name" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -539,13 +543,36 @@ run "store_roles_retain_the_existing_deterministic_name" {
   }
 }
 
+run "telemetry_enabled_uses_the_mocked_client_configuration" {
+  command = apply
+  providers = {
+    azapi   = azapi
+    azurerm = azurerm
+
+    random = random
+  }
+
+  variables {
+    enable_telemetry = true
+  }
+
+  assert {
+    condition = (
+      length(azapi_resource.telemetry) == 1 &&
+      azapi_resource.telemetry[0].type == "Microsoft.Resources/deployments@2025-04-01" &&
+      azapi_resource.telemetry[0].parent_id == "/subscriptions/00000000-0000-0000-0000-000000000000"
+    )
+    error_message = "Enabled telemetry must use the mocked subscription client configuration."
+  }
+}
+
 run "existing_key_value_child_uses_the_mocked_v4_provider" {
   command = apply
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -573,8 +600,8 @@ run "invalid_subnet_is_rejected" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -594,8 +621,8 @@ run "invalid_dns_zone_is_rejected" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -616,8 +643,8 @@ run "invalid_security_group_is_rejected" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -640,8 +667,8 @@ run "invalid_delegated_identity_is_rejected" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {
@@ -668,8 +695,8 @@ run "invalid_resource_group_override_is_rejected" {
   providers = {
     azapi   = azapi
     azurerm = azurerm
-    modtm   = modtm
-    random  = random
+
+    random = random
   }
 
   variables {

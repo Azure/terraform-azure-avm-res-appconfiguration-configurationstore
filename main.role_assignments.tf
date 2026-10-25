@@ -1,7 +1,7 @@
 resource "azapi_resource" "role_assignments" {
   for_each = module.avm_interfaces.role_assignments_azapi
 
-  name      = each.value.name
+  name      = uuidv5("url", "${each.value.body.properties.principalId}${each.value.body.properties.roleDefinitionId}")
   parent_id = azapi_resource.this.id
   type      = each.value.type
   body      = each.value.body

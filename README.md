@@ -14,6 +14,21 @@ Has submodules for:
 
 Previously ignored endpoint location, resource group, subresource, role-assignment names, lock notes and IP member names now take effect. Review existing overrides before upgrading: changing an endpoint's location or resource group can replace it. Existing working endpoint resource addresses and generated names are retained when these overrides are omitted.
 
+## Direct key-value submodule migration
+
+The root module forwards its `location` and `enable_telemetry` values to the local key-value submodule. Direct consumers of the published `//modules/keyvalue` submodule must now set `location`, including when `enable_telemetry = false`. Telemetry is enabled by default and can be disabled with `enable_telemetry = false`.
+
+```hcl
+module "key_value" {
+  source = "Azure/avm-res-appconfiguration-configurationstore/azure//modules/keyvalue"
+
+  configuration_store_resource_id = var.configuration_store_resource_id
+  key                             = "example"
+  location                        = "eastus"
+  value                           = "example-value"
+}
+```
+
 <!-- markdownlint-disable MD033 -->
 ## Requirements
 
@@ -22,10 +37,6 @@ The following requirements are needed by this module:
 - <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) (>= 1.9, < 2.0)
 
 - <a name="requirement_azapi"></a> [azapi](#requirement\_azapi) (~> 2.12)
-
-- <a name="requirement_modtm"></a> [modtm](#requirement\_modtm) (~> 0.3)
-
-- <a name="requirement_random"></a> [random](#requirement\_random) (~> 3.5)
 
 ## Resources
 
@@ -38,11 +49,10 @@ The following resources are used by this module:
 - [azapi_resource.private_endpoints](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.role_assignments](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.role_assignments_pe](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
+- [azapi_resource.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
 - [azapi_resource.this](https://registry.terraform.io/providers/Azure/azapi/latest/docs/resources/resource) (resource)
-- [modtm_telemetry.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/resources/telemetry) (resource)
-- [random_uuid.telemetry](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/uuid) (resource)
+- [terraform_data.telemetry](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) (resource)
 - [azapi_client_config.telemetry](https://registry.terraform.io/providers/Azure/azapi/latest/docs/data-sources/client_config) (data source)
-- [modtm_module_source.telemetry](https://registry.terraform.io/providers/azure/modtm/latest/docs/data-sources/module_source) (data source)
 
 <!-- markdownlint-disable MD013 -->
 ## Required Inputs
@@ -444,13 +454,13 @@ The following Modules are called:
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.5.0
+Version: 0.9.0
 
 ### <a name="module_avm_interfaces_private_endpoints"></a> [avm\_interfaces\_private\_endpoints](#module\_avm\_interfaces\_private\_endpoints)
 
 Source: Azure/avm-utl-interfaces/azure
 
-Version: 0.7.0
+Version: 0.9.0
 
 ### <a name="module_key_values"></a> [key\_values](#module\_key\_values)
 
