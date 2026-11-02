@@ -13,12 +13,6 @@ variable "key" {
   description = "The key name for the App Configuration key."
 }
 
-variable "location" {
-  type        = string
-  description = "The Azure region for this module's resources or telemetry deployment."
-  nullable    = false
-}
-
 variable "value" {
   type        = string
   description = "The value of the App Configuration key."
@@ -45,6 +39,17 @@ variable "label" {
   type        = string
   default     = null
   description = "The label of the App Configuration key."
+}
+
+variable "location" {
+  type        = string
+  default     = null
+  description = "The Azure region for this module's resources or telemetry deployment."
+
+  validation {
+    condition     = !var.enable_telemetry || var.location != null
+    error_message = "The location must not be null when telemetry is enabled."
+  }
 }
 
 variable "tags" {
