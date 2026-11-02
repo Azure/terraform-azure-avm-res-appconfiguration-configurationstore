@@ -57,12 +57,6 @@ Description: The key name for the App Configuration key.
 
 Type: `string`
 
-### <a name="input_location"></a> [location](#input\_location)
-
-Description: The Azure region for this module's resources or telemetry deployment.
-
-Type: `string`
-
 ### <a name="input_value"></a> [value](#input\_value)
 
 Description: The value of the App Configuration key.
@@ -94,6 +88,14 @@ Default: `true`
 ### <a name="input_label"></a> [label](#input\_label)
 
 Description: The label of the App Configuration key.
+
+Type: `string`
+
+Default: `null`
+
+### <a name="input_location"></a> [location](#input\_location)
+
+Description: The Azure region for this module's resources or telemetry deployment.
 
 Type: `string`
 
