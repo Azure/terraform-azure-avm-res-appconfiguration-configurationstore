@@ -71,13 +71,13 @@ resource "azapi_resource" "umi" {
 # key vault & key
 module "key_vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.12.0"
+  version = "0.13.1"
 
-  location            = azapi_resource.rg.location
-  name                = module.naming.key_vault.name_unique
-  resource_group_name = azapi_resource.rg.name
-  tenant_id           = data.azapi_client_config.current.tenant_id
-  enable_telemetry    = var.enable_telemetry
+  location         = azapi_resource.rg.location
+  name             = module.naming.key_vault.name_unique
+  parent_id        = azapi_resource.rg.id
+  tenant_id        = data.azapi_client_config.current.tenant_id
+  enable_telemetry = var.enable_telemetry
   keys = {
     cmk = {
       name     = "cmk"
