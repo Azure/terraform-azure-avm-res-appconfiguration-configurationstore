@@ -24,7 +24,7 @@ resource "azapi_resource" "private_dns_zone_groups" {
 
 module "avm_interfaces_private_endpoints" {
   source   = "Azure/avm-utl-interfaces/azure"
-  version  = "0.9.0"
+  version  = "0.10.1"
   for_each = local.private_endpoints
 
   location                                = var.location
