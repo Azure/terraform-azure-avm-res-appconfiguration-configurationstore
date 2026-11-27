@@ -27,7 +27,7 @@ data "azapi_client_config" "current" {}
 # This allows us to randomize the region for the resource group.
 module "regions" {
   source  = "Azure/avm-utl-regions/azurerm"
-  version = "0.13.2"
+  version = "0.15.0"
 
   location         = var.location
   enable_telemetry = var.enable_telemetry
@@ -71,7 +71,7 @@ resource "azapi_resource" "umi" {
 # key vault & key
 module "key_vault" {
   source  = "Azure/avm-res-keyvault-vault/azurerm"
-  version = "0.13.1"
+  version = "0.13.2"
 
   location         = azapi_resource.rg.location
   name             = module.naming.key_vault.name_unique
