@@ -27,8 +27,8 @@ module "avm_interfaces_private_endpoints" {
   version  = "0.10.1"
   for_each = local.private_endpoints
 
-  location                                = var.location
   enable_telemetry                        = var.enable_telemetry
+  location                                = var.location
   private_endpoints                       = { (each.key) = each.value }
   private_endpoints_manage_dns_zone_group = var.private_endpoints_manage_dns_zone_group
   private_endpoints_scope                 = "${var.resource_group_resource_id}/providers/Microsoft.AppConfiguration/configurationStores/${var.name}"
